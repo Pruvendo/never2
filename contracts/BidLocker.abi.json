@@ -1,0 +1,72 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"never","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "lock",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "verify",
+			"inputs": [
+				{"name":"owner","type":"address"},
+				{"name":"auction","type":"address"},
+				{"name":"nevers","type":"uint256"},
+				{"name":"evers","type":"uint256"},
+				{"name":"salt","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transfer",
+			"inputs": [
+				{"name":"dest","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "receiveWin",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"auctionAddrHash","type":"uint256"},
+		{"key":2,"name":"ownerAddrHash","type":"uint256"},
+		{"key":3,"name":"bidHash","type":"uint256"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"auctionAddrHash","type":"uint256"},
+		{"name":"ownerAddrHash","type":"uint256"},
+		{"name":"bidHash","type":"uint256"},
+		{"name":"_never","type":"bool"},
+		{"name":"_successfulReveal","type":"bool"},
+		{"name":"locked","type":"bool"},
+		{"name":"lockedTS","type":"uint64"},
+		{"name":"lockedBalance","type":"uint256"},
+		{"name":"_owner","type":"address"},
+		{"name":"_bank","type":"address"},
+		{"name":"_operationsReserved","type":"uint128"}
+	]
+}

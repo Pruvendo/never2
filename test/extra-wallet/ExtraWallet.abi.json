@@ -1,0 +1,44 @@
+{
+	"ABI version": 2,
+	"header": ["time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getCurrencies",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"res","type":"map(uint32,uint256)"}
+			]
+		},
+		{
+			"name": "extraTransfer",
+			"inputs": [
+				{"name":"id","type":"uint32"},
+				{"name":"value","type":"uint256"},
+				{"name":"dest","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transfer",
+			"inputs": [
+				{"name":"value","type":"uint128"},
+				{"name":"dest","type":"address"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}

@@ -1,0 +1,71 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateAuction",
+			"inputs": [
+				{"name":"auction","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateWinners",
+			"inputs": [
+				{"name":"closeTS","type":"uint64"},
+				{"name":"neverWinner","type":"address"},
+				{"name":"neverWinnerNevers","type":"uint256"},
+				{"name":"neverWinnerEvers","type":"uint256"},
+				{"name":"everWinner","type":"address"},
+				{"name":"everWinnerEvers","type":"uint256"},
+				{"name":"everWinnerNevers","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "payNevers",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "payEvers",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"_proxy","type":"address"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"_proxy","type":"address"},
+		{"name":"_activeAuction","type":"address"},
+		{"name":"_auctionCloseTS","type":"uint64"},
+		{"name":"_winnerBuyDuration","type":"uint64"},
+		{"name":"_loserBuyDuration","type":"uint64"},
+		{"name":"_neverWinnerNevers","type":"uint256"},
+		{"name":"_neverWinnerEvers","type":"uint256"},
+		{"name":"_neverWinner","type":"address"},
+		{"name":"_everWinnerNevers","type":"uint256"},
+		{"name":"_everWinnerEvers","type":"uint256"},
+		{"name":"_everWinner","type":"address"}
+	]
+}

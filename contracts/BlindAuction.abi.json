@@ -1,0 +1,81 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"USDToNanoever","type":"uint128"},
+				{"name":"minNeverBid","type":"uint256"},
+				{"name":"minNanoeverBid","type":"uint256"},
+				{"name":"openDuration","type":"uint64"},
+				{"name":"revealDuration","type":"uint64"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "reveal",
+			"inputs": [
+				{"name":"auctionAddrHash","type":"uint256"},
+				{"name":"ownerAddrHash","type":"uint256"},
+				{"name":"bidHash","type":"uint256"},
+				{"name":"key","type":"uint256"},
+				{"name":"lockTS","type":"uint64"},
+				{"name":"nevers","type":"uint256"},
+				{"name":"nanoevers","type":"uint256"},
+				{"name":"isNever","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "update",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "_setLockerCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"_proxy","type":"address"},
+		{"key":2,"name":"_bank","type":"address"},
+		{"key":3,"name":"_iteration","type":"uint64"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"_proxy","type":"address"},
+		{"name":"_bank","type":"address"},
+		{"name":"_iteration","type":"uint64"},
+		{"name":"_phase","type":"uint8"},
+		{"name":"everFirst","type":"address"},
+		{"components":[{"name":"nevers","type":"uint256"},{"name":"nanoevers","type":"uint256"},{"name":"isNever","type":"bool"}],"name":"everFirstPrice","type":"tuple"},
+		{"components":[{"name":"nevers","type":"uint256"},{"name":"nanoevers","type":"uint256"},{"name":"isNever","type":"bool"}],"name":"everSecondPrice","type":"tuple"},
+		{"name":"neverFirst","type":"address"},
+		{"components":[{"name":"nevers","type":"uint256"},{"name":"nanoevers","type":"uint256"},{"name":"isNever","type":"bool"}],"name":"neverFirstPrice","type":"tuple"},
+		{"components":[{"name":"nevers","type":"uint256"},{"name":"nanoevers","type":"uint256"},{"name":"isNever","type":"bool"}],"name":"neverSecondPrice","type":"tuple"},
+		{"name":"_USDToNanoever","type":"uint128"},
+		{"name":"_minNanoeverBid","type":"uint256"},
+		{"name":"_minNeverBid","type":"uint256"},
+		{"name":"openTS","type":"uint64"},
+		{"name":"revealStartTS","type":"uint64"},
+		{"name":"_openDuration","type":"uint64"},
+		{"name":"_revealDuration","type":"uint64"},
+		{"name":"_closeTS","type":"uint64"},
+		{"name":"_owner","type":"address"},
+		{"name":"_lockerCode","type":"cell"}
+	]
+}

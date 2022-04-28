@@ -1,0 +1,47 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "lock",
+			"inputs": [
+				{"name":"nevers","type":"uint256"},
+				{"name":"nanoevers","type":"uint256"},
+				{"name":"isNever","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdraw",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"deAuction","type":"address"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"deAuction","type":"address"},
+		{"name":"_nevers","type":"uint256"},
+		{"name":"_nanoevers","type":"uint256"},
+		{"name":"_isNever","type":"bool"},
+		{"name":"_locked","type":"bool"},
+		{"name":"_withdrawn","type":"bool"}
+	]
+}
