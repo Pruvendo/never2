@@ -48,7 +48,7 @@ contract BlindAuction is IAuction {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner, Errors.IS_NOT_OWNER);
+        require(msg.sender == _owner, Errors.IS_NOT_AUCTION_OWNER);
         _;
     }
 

@@ -33,7 +33,7 @@ contract BidLocker {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner, Errors.IS_NOT_OWNER);
+        require(msg.sender == _owner, Errors.IS_NOT_LOCKER_OWNER);
         _;
     }
 
@@ -93,9 +93,9 @@ contract BidLocker {
 
 
         if (_never) {
-            require(lockedBalance >= nevers, Errors.NEVER_TOO_LOW);
+            require(lockedBalance >= nevers, Errors.LOCKED_BALANCE_TOO_LOW);
         } else {
-            require(lockedBalance >= evers, Errors.BALANCE_TOO_LOW);
+            require(lockedBalance >= evers, Errors.LOCKED_BALANCE_TOO_LOW);
         }
 
         _successfulReveal = true;
