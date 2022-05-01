@@ -1,7 +1,7 @@
 pragma ton-solidity >=0.59.4;
 
-import "./Interfaces.sol";
-import "./Lib.sol";
+import "./lib/Interfaces.sol";
+import "./lib/Lib.sol";
 
 
 contract BidLocker {

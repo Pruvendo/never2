@@ -1,7 +1,7 @@
 pragma ton-solidity >=0.59.4;
 
 import "./BlindAuction.sol";
-import "./Lib.sol";
+import "./lib/Lib.sol";
 
 
 // Creates auctions, handles oracle subscription 
