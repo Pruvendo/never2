@@ -56,9 +56,9 @@ contract BidLocker {
 
         if (_never) {
             ExtraCurrencyCollection currencies = address(this).currencies;
-            optional(uint256) nevers = currencies.fetch(Constants.NEVER_ID);
-            require(nevers.hasValue(), Errors.NEVER_TOO_LOW);
-            lockedBalance = nevers.get();
+            optional(uint256) nanonevers = currencies.fetch(Constants.NEVER_ID);
+            require(nanonevers.hasValue(), Errors.NEVER_TOO_LOW);
+            lockedBalance = nanonevers.get();
         } else {
             lockedBalance = address(this).balance - _operationsReserved;
         }
@@ -68,13 +68,13 @@ contract BidLocker {
     }
 
     function verify(address owner, address auction,
-                    uint256 nevers, uint256 evers, uint128 salt) public {
+                    uint256 nanonevers, uint256 nanoevers, uint128 salt) public {
 
         require(tvm.pubkey() == msg.pubkey());
         tvm.accept();
 
         TvmBuilder bidBuilder;
-        bidBuilder.store(nevers, evers, salt);
+        bidBuilder.store(nanonevers, nanoevers, salt);
         TvmCell bidCell = bidBuilder.toCell();
 
         require(tvm.hash(bidCell) == bidHash, Errors.BAD_BID_HASH);
@@ -93,14 +93,23 @@ contract BidLocker {
 
 
         if (_never) {
-            require(lockedBalance >= nevers, Errors.LOCKED_BALANCE_TOO_LOW);
+            require(lockedBalance >= nanonevers, Errors.LOCKED_BALANCE_TOO_LOW);
         } else {
-            require(lockedBalance >= evers, Errors.LOCKED_BALANCE_TOO_LOW);
+            require(lockedBalance >= nanoevers, Errors.LOCKED_BALANCE_TOO_LOW);
         }
 
         _successfulReveal = true;
         _owner = owner;
-        IAuction(auction).reveal(auctionAddrHash, ownerAddrHash, bidHash, tvm.pubkey(), lockedTS, nevers, evers, _never);
+        IAuction(auction).reveal(
+            auctionAddrHash,
+            ownerAddrHash,
+            bidHash,
+            tvm.pubkey(),
+            lockedTS,
+            nanonevers,
+            nanoevers,
+            _never
+        );
     }
 
     function transfer(address dest) public view {

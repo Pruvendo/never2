@@ -32,7 +32,7 @@ contract DeAuction is IDeAuction {
         tvm.accept();
     }
 
-    function newStake(uint256 nevers,
+    function newStake(uint256 nanonevers,
                       uint256 nanoevers,
                       bool isNever,
                       uint256 key) public override {
@@ -42,13 +42,13 @@ contract DeAuction is IDeAuction {
         tvm.accept();
 
         if (isNever) {
-            IAggregator(_neverAggregator).addStake(nevers, nanoevers);
+            IAggregator(_neverAggregator).addStake(nanonevers, nanoevers);
         } else {
-            IAggregator(_everAggregator).addStake(nevers, nanoevers);
+            IAggregator(_everAggregator).addStake(nanonevers, nanoevers);
         }
     }
 
-    function withdraw(uint256 nevers,
+    function withdraw(uint256 nanonevers,
                       uint256 nanoevers,
                       bool isNever,
                       uint256 key) public override {
@@ -59,7 +59,7 @@ contract DeAuction is IDeAuction {
             msg.sender.transfer({value: uint128(nanoevers), bounce: false, flag: 1});
         } else {
             ExtraCurrencyCollection c;
-            c[Constants.NEVER_ID] = nevers;
+            c[Constants.NEVER_ID] = nanonevers;
             msg.sender.transfer({value: 0, bounce: false, flag: 1, currencies: c});
         }
 

@@ -4,10 +4,10 @@ pragma ton-solidity >=0.59.4;
 enum Phase {OPEN, REVEAL, CLOSED}
 
 // Bid isNever means the owner of the bid wants to buy 
-// corresponding amount of *nanoevers* using corresponding amount of *nevers*
+// corresponding amount of *nanoevers* using corresponding amount of *nanonevers*
 // and vice versa.
 struct Bid {
-    uint256 nevers;
+    uint256 nanonevers;
     uint256 nanoevers;
     bool isNever;
 }
@@ -23,7 +23,12 @@ library Helpers {
     function greater(Bid left, Bid right) public returns (bool gt) {
         require(left.isNever == right.isNever, Errors.BIDS_UNCOMPARABLE);
 
-        return left.nanoevers * right.nevers > left.nevers * right.nanoevers;
+        return left.isNever == (left.nanoevers * right.nanonevers < right.nanoevers * left.nanonevers);
+
+    }
+
+    function greaterOrEqual(Bid left, Bid right) public returns (bool gt) {
+        return !(greater(right, left));
     }
 
 }
@@ -60,6 +65,7 @@ library Errors {
     uint16 constant IS_NOT_PROXY = 304;
     uint16 constant BID_NOT_LOCKED_IN_TIME = 305;
     uint16 constant BID_TOO_SMALL = 306;
+    uint16 constant BID_RATE_BELOW_MIN = 307;
 
     // bank errors
 

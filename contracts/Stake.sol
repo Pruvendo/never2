@@ -8,7 +8,7 @@ import "./lib/Lib.sol";
 contract Stake {
     address static deAuction;
 
-    uint256 _nevers;
+    uint256 _nanonevers;
     uint256 _nanoevers;
     bool _isNever;
     bool _locked = false;
@@ -24,7 +24,7 @@ contract Stake {
         tvm.accept();
     }
 
-    function lock(uint256 nevers, uint256 nanoevers, bool isNever) public onlyOwner {
+    function lock(uint256 nanonevers, uint256 nanoevers, bool isNever) public onlyOwner {
         require(!_locked);
         tvm.accept();
 
@@ -35,26 +35,26 @@ contract Stake {
             optional(uint256) neverBalance =
                 address(this).currencies.fetch(Constants.NEVER_ID);
             require(neverBalance.hasValue());
-            require(neverBalance.get() >= nevers);
-            c[Constants.NEVER_ID] = nevers;
+            require(neverBalance.get() >= nanonevers);
+            c[Constants.NEVER_ID] = nanonevers;
         } else {
             require(address(this).balance >= nanoevers);
             value = uint128(nanoevers);
         }
 
-        _nevers = nevers;
+        _nanonevers = nanonevers;
         _nanoevers = nanoevers;
         _isNever = isNever;
         _locked = true;
 
         IDeAuction(deAuction).newStake{value: value, currencies: c}(
-            nevers, nanoevers, isNever, tvm.pubkey());
+            nanonevers, nanoevers, isNever, tvm.pubkey());
     }
 
     // requires auction ended
     function withdraw() public onlyOwner {
         require(!_withdrawn);
-        IDeAuction(deAuction).withdraw(_nevers, _nanoevers, _isNever, tvm.pubkey());
+        IDeAuction(deAuction).withdraw(_nanonevers, _nanoevers, _isNever, tvm.pubkey());
         _withdrawn = true;
     }
 

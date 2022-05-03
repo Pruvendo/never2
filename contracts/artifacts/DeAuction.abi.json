@@ -13,7 +13,7 @@
 		{
 			"name": "newStake",
 			"inputs": [
-				{"name":"nevers","type":"uint256"},
+				{"name":"nanonevers","type":"uint256"},
 				{"name":"nanoevers","type":"uint256"},
 				{"name":"isNever","type":"bool"},
 				{"name":"key","type":"uint256"}
@@ -24,7 +24,7 @@
 		{
 			"name": "withdraw",
 			"inputs": [
-				{"name":"nevers","type":"uint256"},
+				{"name":"nanonevers","type":"uint256"},
 				{"name":"nanoevers","type":"uint256"},
 				{"name":"isNever","type":"bool"},
 				{"name":"key","type":"uint256"}

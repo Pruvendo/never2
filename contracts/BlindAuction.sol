@@ -26,10 +26,12 @@ contract BlindAuction is IAuction {
     Bid neverSecondPrice;
     // <<
 
-    uint128 _USDToNanoever;   //  assumed as NEVER/NANOEVER
+    uint128 _USDToNanoever;   //  assumed as  10^9 * NANONEVER/NANOEVER
+
+    Bid _baselineBid;         //  bids with lesser ratio aren't allowed
 
     uint256 _minNanoeverBid;
-    uint256 _minNeverBid;
+    uint256 _minNanoneverBid;
 
     uint64 openTS;
     uint64 revealStartTS;
@@ -66,7 +68,7 @@ contract BlindAuction is IAuction {
 
     constructor (
                  uint128 USDToNanoever,
-                 uint256 minNeverBid,
+                 uint256 minNanoneverBid,
                  uint256 minNanoeverBid,
                  uint64 openDuration,
                  uint64 revealDuration) public onlyProxy {
@@ -76,7 +78,10 @@ contract BlindAuction is IAuction {
 
         _USDToNanoever = USDToNanoever;
 
-        _minNeverBid = minNeverBid;
+        _baselineBid = Bid(10^9, _USDToNanoever, false);
+
+
+        _minNanoneverBid = minNanoneverBid;
         _minNanoeverBid = minNanoeverBid;
 
         _openDuration = openDuration;
@@ -91,7 +96,7 @@ contract BlindAuction is IAuction {
                     uint256 bidHash,
                     uint256 key,
                     uint64 lockTS,
-                    uint256 nevers,
+                    uint256 nanonevers,
                     uint256 nanoevers,
                     bool isNever) public override doUpdate inPhase(Phase.REVEAL) {
 
@@ -114,8 +119,10 @@ contract BlindAuction is IAuction {
         tvm.accept();
 
         if (isNever) {
+            _baselineBid.isNever = true;
+            Bid newBid = Bid(nanonevers, nanoevers, isNever);
+            require(Helpers.greaterOrEqual(newBid, _baselineBid), Errors.BID_RATE_BELOW_MIN);
             require(nanoevers >= _minNanoeverBid, Errors.BID_TOO_SMALL);
-            Bid newBid = Bid(nevers, nanoevers, isNever);
             if (Helpers.greater(newBid, everSecondPrice)) {
                 everSecondPrice = newBid;
             }
@@ -124,8 +131,10 @@ contract BlindAuction is IAuction {
                 everFirst = msg.sender;
             }
         } else {
-            require(nevers >= _minNeverBid, Errors.BID_TOO_SMALL);
-            Bid newBid = Bid(nevers, nanoevers, isNever);
+            _baselineBid.isNever = false;
+            Bid newBid = Bid(nanonevers, nanoevers, isNever);
+            require(nanonevers >= _minNanoneverBid, Errors.BID_TOO_SMALL);
+            require(Helpers.greaterOrEqual(newBid, _baselineBid), Errors.BID_RATE_BELOW_MIN);
             if (Helpers.greater(newBid, neverSecondPrice)) {
                 neverSecondPrice = newBid;
             }
@@ -163,11 +172,11 @@ contract BlindAuction is IAuction {
         INeverBank(_bank).updateWinners(
             _closeTS,
             neverFirst,
-            neverSecondPrice.nevers,
+            neverSecondPrice.nanonevers,
             neverSecondPrice.nanoevers,
             everFirst,
             everSecondPrice.nanoevers,
-            everSecondPrice.nevers
+            everSecondPrice.nanonevers
         );
     }
 

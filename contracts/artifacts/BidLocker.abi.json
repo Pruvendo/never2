@@ -23,8 +23,8 @@
 			"inputs": [
 				{"name":"owner","type":"address"},
 				{"name":"auction","type":"address"},
-				{"name":"nevers","type":"uint256"},
-				{"name":"evers","type":"uint256"},
+				{"name":"nanonevers","type":"uint256"},
+				{"name":"nanoevers","type":"uint256"},
 				{"name":"salt","type":"uint128"}
 			],
 			"outputs": [
