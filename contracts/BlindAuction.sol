@@ -14,6 +14,9 @@ contract BlindAuction is IAuction {
 
     //
 
+    event auctionNeverWinnerEvent(address locker);
+    event auctionEverWinnerEvent(address locker);
+
     Phase _phase;
 
     // selling ever >>
@@ -167,17 +170,38 @@ contract BlindAuction is IAuction {
     }
 
     function _notifyWinner() private view {
-        // todo: emit winner event
 
-        INeverBank(_bank).updateWinners(
-            _closeTS,
-            neverFirst,
-            neverSecondPrice.nanonevers,
-            neverSecondPrice.nanoevers,
-            everFirst,
-            everSecondPrice.nanoevers,
-            everSecondPrice.nanonevers
-        );
+        (uint256 neverWinnerNevers,
+         uint256 neverWinnerEvers, 
+         uint256 everWinnerEvers,
+         uint256 everWinnerNevers) = _calcWinnerRatios();
+
+        INeverBank(_bank).updateWinners({
+            closeTS: _closeTS,
+            neverWinner: neverFirst,
+            neverWinnerNevers: neverWinnerNevers,
+            neverWinnerEvers: neverWinnerEvers,
+            everWinner: everFirst,
+            everWinnerEvers: everWinnerEvers,
+            everWinnerNevers: everWinnerNevers
+        });
+
+        emit auctionNeverWinnerEvent(neverFirst);
+        emit auctionEverWinnerEvent(everFirst);
+    }
+
+    function _calcWinnerRatios() private view 
+            returns (uint256 nNanonevers, uint256 nNanoevers,
+                     uint256 eNanoevers, uint256 eNanonevers) {
+        // the winner should be able to get his requested amount of currency
+        // but pay according to the ratio of the second highest bid.
+
+        // winner of never auction:
+        nNanonevers = neverFirstPrice.nanonevers;
+        nNanoevers = neverSecondPrice.nanoevers * nNanonevers / neverSecondPrice.nanoevers; 
+        // winner of ever auction:
+        eNanoevers = everFirstPrice.nanoevers;
+        eNanonevers = everSecondPrice.nanonevers * eNanonevers / everSecondPrice.nanonevers;
     }
 
     function _setLockerCode(TvmCell code) public onlyOwner {

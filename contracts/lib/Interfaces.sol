@@ -23,7 +23,7 @@ interface INeverBank {
                            uint256 neverWinnerEvers,
                            address everWinner,
                            uint256 everWinnerEvers,
-                           uint256 everWinnerNever
+                           uint256 everWinnerNevers
     ) external;
 }
 

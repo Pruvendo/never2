@@ -18,6 +18,7 @@ contract OracleProxy {
     uint64 auctionIteration = 0;
 
     address public lastAuction;
+    event auctionStartedEvent(address auction);
 
     bool newAuctionIsDue = false;
 
@@ -75,8 +76,6 @@ contract OracleProxy {
         require(address(_bank) != address(0), Errors.BANK_NOT_SET);
         tvm.accept();
 
-        // todo: emit notifying event
-
         lastAuction = new BlindAuction{
             code: _auctionCode,
             value: _auctionDeployValue,
@@ -87,6 +86,8 @@ contract OracleProxy {
                 _iteration: auctionIteration++
             }
         }(_USDToNanoever, 10, 25000000, 900, 300);
+
+        emit auctionStartedEvent(lastAuction);
 
     }
 

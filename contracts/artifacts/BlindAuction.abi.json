@@ -52,6 +52,22 @@
 		{"key":3,"name":"_iteration","type":"uint64"}
 	],
 	"events": [
+		{
+			"name": "auctionNeverWinnerEvent",
+			"inputs": [
+				{"name":"locker","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "auctionEverWinnerEvent",
+			"inputs": [
+				{"name":"locker","type":"address"}
+			],
+			"outputs": [
+			]
+		}
 	],
 	"fields": [
 		{"name":"_pubkey","type":"uint256"},
