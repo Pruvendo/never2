@@ -23,12 +23,13 @@ class Bid:
     argnames=['bid_sizes'],
     argvalues=[
         ([1000 * 10**9, 2000 * 10**9, 3000 * 10**9, 4000 * 10**9,],),
+        ([1000 * 10**9, 2000 * 10**9, 3000 * 10**9],),
     ]
 )
 def test(pytestconfig, bid_sizes):
     ts4.reset_all()
     rootpath = pytestconfig.rootpath
-    ts4.init(rootpath.joinpath('./contracts/'), verbose=True)
+    ts4.init(rootpath.joinpath('./contracts/artifacts/'), verbose=False)
     calc = Calculator()
 
 
@@ -60,6 +61,7 @@ def test(pytestconfig, bid_sizes):
     # lock bids
     bids: List[Bid] = []
     for bid_size in bid_sizes:
+        print('!')
         salt = randint(0, 2**128 - 1)
         # bid_size = 1000 * 10**9
         multisig = SafeMultisig()
@@ -103,8 +105,8 @@ def test(pytestconfig, bid_sizes):
             owner=bid.owner,
             salt=bid.salt,
             auction=auction.address,
-            nevers=0,
-            evers=bid.bid_size,
+            nanonevers=0,
+            nanoevers=bid.bid_size,
         )
         ts4.dispatch_messages()
 

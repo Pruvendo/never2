@@ -26,6 +26,18 @@
 			],
 			"outputs": [
 			]
+		},
+		{
+			"name": "transfer",
+			"inputs": [
+				{"name":"value","type":"uint128"},
+				{"name":"never_value","type":"uint256"},
+				{"name":"bounce","type":"bool"},
+				{"name":"flag","type":"uint16"},
+				{"name":"dest","type":"address"}
+			],
+			"outputs": [
+			]
 		}
 	],
 	"data": [

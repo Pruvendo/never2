@@ -1,1 +1,4 @@
 compiler_version=0.59.4
+
+
+TVM_LINKER=/home/zbork/git/TVM-linker/target/release/tvm_linker
