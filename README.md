@@ -83,7 +83,28 @@ back to the participant.
 
 _BlindAuction_
 
-To be here.
+It's a core contract that represents auction
+itself, below the process of its creation
+described.
+
+- The creation of _BlindAuction_ is initiated by
+_OracleProxy_ mentioned below.
+- At the same time, _NeverBank_ is deployed that
+acts as an entrance point for the "winning"
+coins.
+- _registerBank_ method of _OracleProxy_ is 
+called to keep the bank address. Later this
+address will be sent to each _BlindAuction_
+created by the present _OracleProxy_.
+- Also _setAuctionCode_ method of _OracleProxy_
+is called as it's needed for auction deployment.
+- In the present implementation the 
+_BlindAuction_ itself is deployed by
+_initiateAuctions_ method, but during the Phase
+3 (final stage) it's planned to improve the
+robustness. At the same time the bank is called
+with _updateAuction_ to let it be prepared to
+pay to the winners.
 
 _Calculator_
 
@@ -122,11 +143,18 @@ _NeverBank_
 
 _NeverBank_ is an auxiliary contract that is
 responsible for payments to winners of auctions.
+Basically, it's an entrance point for the "winning" coins. It keeps an _OracleProxy_
+address as a static variable.
 
 _OracleProxy_
 
 This contract acts a bridge between oracles and
-auctions, creating the laters.
+auctions, creating the laters. The reference
+to the oracle (that provides a preliminary
+exchange rate) is kept as a static variable.
+Also it's needed for a validation of
+_BlindAuction_ updates for the auctions created
+by the present _OracleProxy_.
 
 _Stake_
 
