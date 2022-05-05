@@ -239,6 +239,46 @@ address is checked).
 
 **Usage**
 
+All the scripts use _everdev_ utility.
+To set the required _Solidity_ compiler version
+run:
+
+```
+everdev sol set -c 0.59.4
+```
+
+The user must have standard _signers_ and _givers_ to make the scripts runnable. The
+corresponding instruction can be found
+[here](https://github.com/tonlabs/everdev).
+
+- In the file _.project_config_ change _TVM_LINKER_ to the own linker. The
+recompile can be done by using:
+
+```
+./clean.sh && ./compile.sh
+```
+
+- At first run `deploy_proxy_and_bank.sh`. 
+It will deploy contracts and register them
+for the mutial work. Remember the proxy
+address from the last output line.
+- After this the user can freely deploy the
+auctions by the script
+
+```
+./deploy_auction.sh <address>
+```
+
+where the _\<address\>_ is a proxy address
+received above. Again, remember the address
+from the last output line.
+
+**Quality**
+
+The present system was both covered by TS4 tests
+as well as integration testing in a special dev
+net.
+
 **More information**
 
 Feel free to ask any question [Sergey Egorov](https://t/me/SergeyEgorovSPb), 
