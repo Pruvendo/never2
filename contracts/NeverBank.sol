@@ -23,7 +23,7 @@ contract NeverBank is INeverBank {
     uint256 _everWinnerEvers;   // to pay
     address _everWinner;
 
-    
+
 
 
     modifier onlyAuction() {
@@ -32,22 +32,24 @@ contract NeverBank is INeverBank {
     }
 
     modifier onlyProxy() {
-        require(msg.sender == _proxy, Errors.NOT_AN_AUCTION);
+        require(msg.sender == _proxy, Errors.NOT_A_PROXY);
         _;
     }
 
     modifier onlyNeverWinner() {
         require(msg.sender == _neverWinner, Errors.NOT_NEVER_WINNER);
-        require(tx.timestamp < _auctionCloseTS + _winnerBuyDuration, Errors.WINNER_TOO_LATE);
+        require(now < _auctionCloseTS + _winnerBuyDuration, Errors.WINNER_TOO_LATE);
         _;
     }
 
     modifier onlyEverWinner() {
         require(msg.sender == _everWinner, Errors.NOT_EVER_WINNER);
-        require(tx.timestamp < _auctionCloseTS + _winnerBuyDuration, Errors.WINNER_TOO_LATE);
+        require(now < _auctionCloseTS + _winnerBuyDuration, Errors.WINNER_TOO_LATE);
         _;
     }
 
+    // TODO прокси его никогда не вызывает...
+    // может быть стоит просто адрес проверять
     function updateAuction(address auction) public override onlyProxy {
         tvm.accept();
         _activeAuction = auction;

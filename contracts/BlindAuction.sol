@@ -77,7 +77,7 @@ contract BlindAuction is IAuction {
                  uint64 revealDuration) public onlyProxy {
         tvm.accept();
         _phase = Phase.OPEN;
-        openTS = tx.timestamp;
+        openTS = now;
 
         _USDToNanoever = USDToNanoever;
 
@@ -104,8 +104,13 @@ contract BlindAuction is IAuction {
                     bool isNever) public override doUpdate inPhase(Phase.REVEAL) {
 
         require(lockTS < revealStartTS, Errors.BID_NOT_LOCKED_IN_TIME);
-        
-        TvmCell code = _lockerCode.toSlice().loadRef();
+
+        tvm.accept(); // затычка (не хватает газа)
+
+        // TODO не лучше ли использовать хеши?
+        // если их не использовать, то газа не хватает
+        // TvmCell code = _lockerCode.toSlice().loadRef();
+        TvmCell code = _lockerCode;
         TvmCell state = tvm.buildStateInit({
             contr: BidLocker,
             varInit: {
@@ -117,15 +122,17 @@ contract BlindAuction is IAuction {
             code: code
         });
         address lockerAddress = address.makeAddrStd(0, tvm.hash(state));
-        require(lockerAddress == msg.sender, Errors.NOT_A_LOCKER);
-
-        tvm.accept();
+        // require(lockerAddress == msg.sender, Errors.NOT_A_LOCKER);
+        if (lockerAddress != msg.sender) {
+            return; // NOT A LOCKER CONTRACT
+        }
 
         if (isNever) {
             _baselineBid.isNever = true;
             Bid newBid = Bid(nanonevers, nanoevers, isNever);
-            require(Helpers.greaterOrEqual(newBid, _baselineBid), Errors.BID_RATE_BELOW_MIN);
-            require(nanoevers >= _minNanoeverBid, Errors.BID_TOO_SMALL);
+            if (Helpers.greater(_baselineBid, newBid) || nanoevers < _minNanoeverBid) {
+                return;  // BID TOO SMALL OR RATE BELOW MIN
+            }
             if (Helpers.greater(newBid, everSecondPrice)) {
                 everSecondPrice = newBid;
             }
@@ -138,6 +145,9 @@ contract BlindAuction is IAuction {
             Bid newBid = Bid(nanonevers, nanoevers, isNever);
             require(nanonevers >= _minNanoneverBid, Errors.BID_TOO_SMALL);
             require(Helpers.greaterOrEqual(newBid, _baselineBid), Errors.BID_RATE_BELOW_MIN);
+            if (Helpers.greater(_baselineBid, newBid) || nanonevers < _minNanoneverBid) {
+                return;  // BID TOO SMALL OR RATE BELOW MIN
+            }
             if (Helpers.greater(newBid, neverSecondPrice)) {
                 neverSecondPrice = newBid;
             }
@@ -146,25 +156,26 @@ contract BlindAuction is IAuction {
                 neverFirst = msg.sender;
             }
         }
-
     }
 
     function update() public pure onlyOwner doUpdate {
         tvm.accept();
-    } 
+    }
 
     //
 
     function _update() private {
-        if (_phase == Phase.OPEN && tx.timestamp > openTS + _openDuration) {
+        // TODO если не было ни одного ревила, то контракт намертво застрянет
+        if (_phase == Phase.OPEN && now > openTS + _openDuration) {
             _phase = Phase.REVEAL;
-            revealStartTS = tx.timestamp;
+            revealStartTS = now;
         }
-        if (_phase == Phase.REVEAL && tx.timestamp > revealStartTS + _revealDuration) {
+        if (_phase == Phase.REVEAL && now > revealStartTS + _revealDuration) {
             _phase = Phase.CLOSED;
-            _closeTS = tx.timestamp;
+            _closeTS = now;
         }
         if (_phase == Phase.CLOSED) {
+            // TODO никто не может инициировать выплату кроме владельца, что плохо
             _notifyWinner();
         }
     }
@@ -205,6 +216,7 @@ contract BlindAuction is IAuction {
     }
 
     function _setLockerCode(TvmCell code) public onlyOwner {
+        tvm.accept();
         _lockerCode = code;
     }
 
