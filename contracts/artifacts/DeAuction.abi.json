@@ -6,6 +6,8 @@
 		{
 			"name": "constructor",
 			"inputs": [
+				{"name":"saltEver","type":"uint128"},
+				{"name":"saltNever","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -43,6 +45,14 @@
 			]
 		},
 		{
+			"name": "notifyWin",
+			"inputs": [
+				{"name":"isNever","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "updateStatus",
 			"inputs": [
 				{"name":"win","type":"bool"}
@@ -51,7 +61,26 @@
 			]
 		},
 		{
+			"name": "_buildBidLockerStateInit",
+			"inputs": [
+				{"name":"auctionAddrHash","type":"uint256"},
+				{"name":"ownerAddrHash","type":"uint256"},
+				{"name":"bidHash","type":"uint256"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
 			"name": "setStakeCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setLockerCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
 			],
@@ -74,7 +103,15 @@
 		{"name":"_neverAggregator","type":"address"},
 		{"name":"_everAggregator","type":"address"},
 		{"name":"neverLocker","type":"address"},
+		{"name":"_saltNever","type":"uint128"},
 		{"name":"everLocker","type":"address"},
+		{"name":"_saltEver","type":"uint128"},
+		{"components":[{"name":"nanonevers","type":"uint256"},{"name":"nanoevers","type":"uint256"},{"name":"isNever","type":"bool"}],"name":"neverBid","type":"tuple"},
+		{"components":[{"name":"nanonevers","type":"uint256"},{"name":"nanoevers","type":"uint256"},{"name":"isNever","type":"bool"}],"name":"everBid","type":"tuple"},
+		{"name":"_lockerDeployValue","type":"uint128"},
+		{"name":"fundingDeadline","type":"uint64"},
+		{"name":"_lockerCode","type":"cell"},
+		{"name":"lockerCodeSet","type":"bool"},
 		{"name":"_stakeCode","type":"cell"},
 		{"name":"stakeCodeSet","type":"bool"},
 		{"name":"status","type":"uint8"}

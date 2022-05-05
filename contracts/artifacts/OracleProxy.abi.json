@@ -49,14 +49,6 @@
 			"outputs": [
 				{"name":"lastAuction","type":"address"}
 			]
-		},
-		{
-			"name": "auctionCodeHash",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"auctionCodeHash","type":"uint256"}
-			]
 		}
 	],
 	"data": [
@@ -82,7 +74,7 @@
 		{"name":"auctionIteration","type":"uint64"},
 		{"name":"lastAuction","type":"address"},
 		{"name":"newAuctionIsDue","type":"bool"},
-		{"name":"auctionCodeHash","type":"uint256"},
+		{"name":"_auctionCodeHash","type":"uint256"},
 		{"name":"_auctionCode","type":"cell"},
 		{"name":"_auctionCodeSet","type":"bool"},
 		{"name":"_auctionDeployValue","type":"uint128"}

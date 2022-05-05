@@ -29,7 +29,7 @@ contract WeightedAggregate is IAggregator {
         _nanoevers += nanoevers;
     }
 
-    function aggregate() public override {
+    function aggregate() public isAuction override {
         IDeAuction(_deAuction).acceptAggregate({
             nanonevers: _nanonevers,
             nanoevers: _nanoevers,

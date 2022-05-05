@@ -24,7 +24,7 @@ contract OracleProxy {
 
     //
 
-    uint256 public auctionCodeHash;
+    uint256 _auctionCodeHash;
     TvmCell _auctionCode;
     bool _auctionCodeSet = false;
 
@@ -95,7 +95,7 @@ contract OracleProxy {
         tvm.accept();
 
         _auctionCode = code;
-        auctionCodeHash = tvm.hash(code);
+        _auctionCodeHash = tvm.hash(code);
         _auctionCodeSet = true;
     }
 
