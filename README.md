@@ -106,6 +106,70 @@ robustness. At the same time the bank is called
 with _updateAuction_ to let it be prepared to
 pay to the winners.
 
+The auctions consists on two parts:
+_NEVER/EVER_ and _EVER_NEVER_. It has as much as
+three static variables:
+- _OracleProxy_ address
+- _NeverBank_ address
+- Ordinary number of the auction (monitored by
+_OracleProxy_ that deploys the auctions to keep
+them unique).
+
+The auction bid looks like a triple: nanoevers,
+nanoevers and direction, where the first two
+numbers indicate the amounts the participant
+plans to pay or receive, where the last one
+represents the direction (_true_ means 
+conversion from nanonevers to nanoevevers and
+_false_ the opposite).
+
+The constructor parameteres define the floor
+rate (all the lower bids are dropped) as well
+as minimal exchange amounts (too small deals
+are forbidden). The rest of parameters describe
+the duration of _OPEN_ and _REVEAL_ stages.
+
+The creation of bids is not controlled by the
+auction. The first interaction of bids with the
+auction happens at _REVEAL_ stage that allows
+to keep all the bids secret for other
+participants (all the data is hashed and
+salted, the exception here is D'Auction as it
+can not make a hidden bid).
+
+To create a bid (_BidLocker_) it's necessary to
+calculate the following hashes:
+- Auction address
+- Owner address (where coins are to be 
+transferred later, important for D'Auctions)
+- hashes of the bid itself (a pair of values)
+
+All these hashes are kept as static variables of
+the _BidLocker_ contract.
+
+Upon deployment of _BidLocker_ it's necessary
+to transfer there enough coins and call the
+_lock_ method BEFORE starting the _REVEAL_ stage
+of the auction. During the _REVEAL_ stage the
+_verify_ method should be called to check if
+the bid corresponds to the one created at the
+time of _lock_ method invocation. The same
+parameteres (that were hashed before deployment
+and salting) must be used.
+
+The winning bid is the one with the best 
+_myCurrency_/_buyCurrency_ ratio, however,
+_buyCurrency_ can be purchased by the rate of
+the second-best bid.
+
+Upon the auction completion the auction calls
+_updateWinners_ method of _NeverBank_ and 
+informs it about winners and necessary payments.
+The owner of the winning _BidLocker_ can call
+_receiveWin_ method that transfers the required
+amount to the bank and receives coins in the
+desired currency back.
+
 _Calculator_
 
 _Calculator_ is an auxiliary contract that
