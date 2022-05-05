@@ -74,6 +74,7 @@ library Errors {
     uint16 constant NOT_EVER_WINNER = 403;
     uint16 constant WINNER_TOO_LATE = 404;
     uint16 constant PROXY_NOT_SET = 405;
+    uint16 constant NOT_A_PROXY = 406;
 
     // locker errors
 

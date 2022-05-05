@@ -63,7 +63,7 @@ contract BidLocker {
             lockedBalance = address(this).balance - _operationsReserved;
         }
 
-        lockedTS = tx.timestamp;
+        lockedTS = now;
         locked = true;
     }
 
@@ -71,31 +71,35 @@ contract BidLocker {
                     uint256 nanonevers, uint256 nanoevers, uint128 salt) public {
 
         require(tvm.pubkey() == msg.pubkey());
+        require(!_successfulReveal);
         tvm.accept();
 
         TvmBuilder bidBuilder;
         bidBuilder.store(nanonevers, nanoevers, salt);
         TvmCell bidCell = bidBuilder.toCell();
 
-        require(tvm.hash(bidCell) == bidHash, Errors.BAD_BID_HASH);
+        if (tvm.hash(bidCell) != bidHash) {
+            return;
+        }
 
         TvmBuilder ownerBuilder;
         ownerBuilder.store(owner, salt);
         TvmCell ownerCell = ownerBuilder.toCell();
 
-        require(tvm.hash(ownerCell) == ownerAddrHash, Errors.BAD_OWNER_HASH);
+        if (tvm.hash(ownerCell) != ownerAddrHash) {
+            return;
+        }
 
         TvmBuilder auctionBuilder;
         auctionBuilder.store(auction, salt);
         TvmCell auctionCell = auctionBuilder.toCell();
 
-        require(tvm.hash(auctionCell) == auctionAddrHash, Errors.BAD_AUCTION_HASH);
+        if (tvm.hash(auctionCell) != auctionAddrHash) {
+            return;
+        }
 
-
-        if (_never) {
-            require(lockedBalance >= nanonevers, Errors.LOCKED_BALANCE_TOO_LOW);
-        } else {
-            require(lockedBalance >= nanoevers, Errors.LOCKED_BALANCE_TOO_LOW);
+        if (_never && lockedBalance < nanonevers || (!_never) && lockedBalance < nanoevers) {
+            return;
         }
 
         _successfulReveal = true;
@@ -137,6 +141,6 @@ contract BidLocker {
         } else {
             INeverBank(_bank).payNevers();
         }
-    } 
+    }
 
 }
