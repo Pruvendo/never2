@@ -23,6 +23,7 @@ class Bid:
     argnames=['bid_sizes'],
     argvalues=[
         ([1000 * 10**9, 2000 * 10**9, 3000 * 10**9, 4000 * 10**9,],),
+        ([1000 * 10**9, 2000 * 10**9, 3000 * 10**9],),
     ]
 )
 def test(pytestconfig, bid_sizes):
