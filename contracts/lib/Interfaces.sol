@@ -47,3 +47,7 @@ interface IAggregator {
     function addStake(uint256 nanonevers, uint256 nanoevers) external;
     function aggregate() external;
 }
+
+interface IBidLocker {
+    function receiveWinInternal() external;
+}
