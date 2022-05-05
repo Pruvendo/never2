@@ -90,8 +90,13 @@ library Errors {
     // de'auction errors 
 
     uint16 constant NOT_A_STAKE = 601;
+    uint16 constant NOT_AN_AGGREGATOR = 602;
 
     // stake errors
+
+    // aggregate errors
+
+    uint16 constant NOT_DEAUCTION = 801;
 
 
 }

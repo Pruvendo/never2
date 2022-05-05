@@ -28,6 +28,17 @@ contract DeAuction is IDeAuction {
         _;
     }
 
+    modifier onlyNeverAggregator() {
+        require(msg.sender == _neverAggregator, Errors.NOT_AN_AGGREGATOR);
+        _;
+    }
+
+    modifier onlyEverAggregator() {
+        require(msg.sender == _everAggregator, Errors.NOT_AN_AGGREGATOR);
+        _;
+    }
+
+
     constructor() public onlyOwner {
         tvm.accept();
     }
@@ -63,6 +74,12 @@ contract DeAuction is IDeAuction {
             msg.sender.transfer({value: 0, bounce: false, flag: 1, currencies: c});
         }
 
+    }
+
+    function acceptAggregate(uint256 nanonevers,
+                             uint256 nanoevers,
+                             bool isNever) public override {
+        // asdf
     }
 
     function updateStatus(bool win) public onlyOwner {

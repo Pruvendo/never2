@@ -33,6 +33,16 @@
 			]
 		},
 		{
+			"name": "acceptAggregate",
+			"inputs": [
+				{"name":"nanonevers","type":"uint256"},
+				{"name":"nanoevers","type":"uint256"},
+				{"name":"isNever","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "updateStatus",
 			"inputs": [
 				{"name":"win","type":"bool"}

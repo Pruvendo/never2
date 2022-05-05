@@ -38,9 +38,12 @@ interface IDeAuction {
                       bool isNever,
                       uint256 key
     ) external;
+    function acceptAggregate(uint256 nanonevers,
+                             uint256 nanoevers,
+                             bool isNever) external;
 }
 
 interface IAggregator {
     function addStake(uint256 nanonevers, uint256 nanoevers) external;
-    function aggregate() external returns (uint256 nanonevers, uint256 nanoevers);
+    function aggregate() external;
 }

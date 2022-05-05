@@ -8,9 +8,14 @@ source $base_dir/.project_config
 
 everdev sol set --compiler $compiler_version
 
-for s in $base_dir/*.sol
-do
-    echo $s
-    everdev sol compile $s --output-dir $base_dir/artifacts
-done
+compile_dir () {
+    for s in $1/*.sol
+    do
+        echo $s
+        everdev sol compile $s --output-dir $1/artifacts
+    done
 
+}
+
+compile_dir $base_dir
+compile_dir $base_dir/aggregators
