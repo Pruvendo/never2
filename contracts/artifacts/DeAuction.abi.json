@@ -61,6 +61,14 @@
 			]
 		},
 		{
+			"name": "setDeadline",
+			"inputs": [
+				{"name":"deadline","type":"uint64"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setAggregators",
 			"inputs": [
 				{"name":"neverAggregator","type":"address"},

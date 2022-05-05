@@ -29,7 +29,6 @@
 		{
 			"name": "initiateAuctions",
 			"inputs": [
-				{"name":"pubkey","type":"uint256"}
 			],
 			"outputs": [
 				{"name":"value0","type":"address"}

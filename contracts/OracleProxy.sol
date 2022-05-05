@@ -73,7 +73,7 @@ contract OracleProxy {
 
     //
     // do it by hand
-    function initiateAuctions(uint256 pubkey) public checkPubkey returns (address) {
+    function initiateAuctions() public checkPubkey returns (address) {
         require(_auctionCodeSet, Errors.AUCTION_CODE_NOT_SET);
         require(address(_bank) != address(0), Errors.BANK_NOT_SET);
         tvm.accept();
@@ -81,13 +81,15 @@ contract OracleProxy {
         lastAuction = new BlindAuction{
             code: _auctionCode,
             value: _auctionDeployValue,
-            pubkey: pubkey,
+            pubkey: msg.pubkey(),
             varInit: {
                 _proxy: address(this),
                 _bank: _bank,
                 _iteration: auctionIteration++
             }
-        }(_USDToNanoever, 10, 25000000, 900, 300); // TODO use args
+        }(_USDToNanoever, 10000000000, 10000000000, 10800, 1800); // TODO use args
+
+        INeverBank(_bank).updateAuction(lastAuction);
 
         emit auctionStartedEvent(lastAuction);
 

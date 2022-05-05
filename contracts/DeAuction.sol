@@ -211,6 +211,10 @@ contract DeAuction is IDeAuction {
         }
     }
 
+    function setDeadline(uint64 deadline) public onlyOwner {
+        fundingDeadline = deadline;
+    }
+
     function setAggregators(address neverAggregator,
                             address everAggregator) public onlyOwner {
         tvm.accept();
