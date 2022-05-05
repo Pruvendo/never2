@@ -4,7 +4,7 @@ import "./lib/Interfaces.sol";
 import "./lib/Lib.sol";
 
 
-contract BidLocker {
+contract BidLocker is IBidLocker {
 
     uint256 static auctionAddrHash;
     uint256 static ownerAddrHash;
@@ -131,7 +131,7 @@ contract BidLocker {
     }
 
     // internal (deAuction)
-    function receiveWinInternal() internal view onlyOwner {
+    function receiveWinInternal() public override onlyOwner {
         _receiveWin();
     }
 
