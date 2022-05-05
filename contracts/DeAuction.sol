@@ -14,8 +14,10 @@ enum DeAuctionStatus {
 contract DeAuction is IDeAuction {
 
     address static _auction;
-    address static _neverAggregator;
-    address static _everAggregator;
+
+
+    address _neverAggregator;
+    address _everAggregator;
 
     address neverLocker;
     uint128 _saltNever;
@@ -107,15 +109,15 @@ contract DeAuction is IDeAuction {
         }
     }
 
-    function notifyWin(bool isNever) public onlyLocker pure {
+    function notifyWin(bool isNever) public onlyLocker view {
         if (isNever) {
-            // todo finish this function
+            BidLocker(neverLocker).receiveWinInternal{value: .5 ever}();
         } else {
-
+            BidLocker(everLocker).receiveWinInternal{value: .5 ever}();
         }
     }
 
-    function updateStatus(bool win) public onlyOwner {
+    function updateStatus(bool win) public doUpdate onlyOwner {
         tvm.accept();
         if (win) {
             status = DeAuctionStatus.WIN;
@@ -190,7 +192,7 @@ contract DeAuction is IDeAuction {
         uint256 auctionAddrHash,
         uint256 ownerAddrHash,
         uint256 bidHash
-    ) public view returns (TvmCell) {
+    ) private inline view returns (TvmCell) {
         return tvm.buildStateInit({
             contr: BidLocker,
             varInit: {
@@ -207,6 +209,13 @@ contract DeAuction is IDeAuction {
             status = DeAuctionStatus.BIDDING;
             _initBidding();
         }
+    }
+
+    function setAggregators(address neverAggregator,
+                            address everAggregator) public onlyOwner {
+        tvm.accept();
+        _neverAggregator = neverAggregator;
+        _everAggregator = everAggregator;
     }
 
     function setStakeCode(TvmCell code) public onlyOwner {
