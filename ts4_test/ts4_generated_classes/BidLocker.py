@@ -9,9 +9,9 @@ class BidLocker(ts4.BaseContract):
         auctionAddrHash=None,
         ownerAddrHash=None,
         bidHash=None,
-        
+
         never=None,
-        
+
         address=None,
         balance=None,
         keypair=None,
@@ -33,7 +33,7 @@ class BidLocker(ts4.BaseContract):
                     auctionAddrHash=auctionAddrHash,
                     ownerAddrHash=ownerAddrHash,
                     bidHash=bidHash,
-                    
+
                 ),
                 keypair=keypair,
                 balance=balance,
@@ -44,7 +44,7 @@ class BidLocker(ts4.BaseContract):
                 'constructor',
                 params=dict(
                     never=never,
-                    
+
                 ),
                 private_key=self.private_key_,
             )
@@ -52,21 +52,21 @@ class BidLocker(ts4.BaseContract):
 
     def lock(
         self,
-        
+
         is_getter=False,
     ):
         if is_getter:
             return super().call_getter(
                 method='lock',
                 params=dict(
-                    
+
                 ),
             )
         else:
             return super().call_method(
                 method='lock',
                 params=dict(
-                    
+
                 ),
                 private_key=self.private_key_,
             )
@@ -75,10 +75,10 @@ class BidLocker(ts4.BaseContract):
         self,
         owner,
         auction,
-        nevers,
-        evers,
+        nanonevers,
+        nanoevers,
         salt,
-        
+
         is_getter=False,
     ):
         if is_getter:
@@ -87,10 +87,10 @@ class BidLocker(ts4.BaseContract):
                 params=dict(
                     owner=owner,
                     auction=auction,
-                    nevers=nevers,
-                    evers=evers,
+                    nanonevers=nanonevers,
+                    nanoevers=nanoevers,
                     salt=salt,
-                    
+
                 ),
             )
         else:
@@ -99,10 +99,10 @@ class BidLocker(ts4.BaseContract):
                 params=dict(
                     owner=owner,
                     auction=auction,
-                    nevers=nevers,
-                    evers=evers,
+                    nanonevers=nanonevers,
+                    nanoevers=nanoevers,
                     salt=salt,
-                    
+
                 ),
                 private_key=self.private_key_,
             )
@@ -110,7 +110,7 @@ class BidLocker(ts4.BaseContract):
     def transfer(
         self,
         dest,
-        
+
         is_getter=False,
     ):
         if is_getter:
@@ -118,7 +118,7 @@ class BidLocker(ts4.BaseContract):
                 method='transfer',
                 params=dict(
                     dest=dest,
-                    
+
                 ),
             )
         else:
@@ -126,33 +126,33 @@ class BidLocker(ts4.BaseContract):
                 method='transfer',
                 params=dict(
                     dest=dest,
-                    
+
                 ),
                 private_key=self.private_key_,
             )
 
     def receiveWin(
         self,
-        
+
         is_getter=False,
     ):
         if is_getter:
             return super().call_getter(
                 method='receiveWin',
                 params=dict(
-                    
+
                 ),
             )
         else:
             return super().call_method(
                 method='receiveWin',
                 params=dict(
-                    
+
                 ),
                 private_key=self.private_key_,
             )
 
-    
+
 
 
     @property
@@ -211,4 +211,4 @@ class BidLocker(ts4.BaseContract):
     def _operationsReserved(self):
         return self.call_getter('_operationsReserved')
 
-    
+
