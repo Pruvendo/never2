@@ -11,11 +11,11 @@ aggregate_value=1000000000
 salt_ever=123
 salt_never=134
 
-auction_mock="0000000000000000000000000000000000000000000000000000000000000000"
+auction=$1
 
 
 address=$(everdev contract deploy $base_dir/artifacts/DeAuction.abi.json\
- --data _auction:$auction_mock\
+ --data _auction:$auction\
  --input saltEver:$salt_ever,saltNever:$salt_never\
  --value $initial_value\
  --prevent-ui | grep -oP 'address: 0:\K.+')
