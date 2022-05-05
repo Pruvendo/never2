@@ -127,8 +127,8 @@ contract BlindAuction is IAuction {
             return; // NOT A LOCKER CONTRACT
         }
 
-        if (isNever) {
-            _baselineBid.isNever = true;
+        if (!isNever) {
+            _baselineBid.isNever = false;
             Bid newBid = Bid(nanonevers, nanoevers, isNever);
             if (Helpers.greater(_baselineBid, newBid) || nanoevers < _minNanoeverBid) {
                 return;  // BID TOO SMALL OR RATE BELOW MIN
@@ -141,10 +141,8 @@ contract BlindAuction is IAuction {
                 everFirst = msg.sender;
             }
         } else {
-            _baselineBid.isNever = false;
+            _baselineBid.isNever = true;
             Bid newBid = Bid(nanonevers, nanoevers, isNever);
-            require(nanonevers >= _minNanoneverBid, Errors.BID_TOO_SMALL);
-            require(Helpers.greaterOrEqual(newBid, _baselineBid), Errors.BID_RATE_BELOW_MIN);
             if (Helpers.greater(_baselineBid, newBid) || nanonevers < _minNanoneverBid) {
                 return;  // BID TOO SMALL OR RATE BELOW MIN
             }
