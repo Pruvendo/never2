@@ -38,7 +38,7 @@ auction is supposed to be pretty high
 people can participate there.
 
 To make the auction more acceptible for
-a wider audothorium the patadigm of
+a wider audithorium the paradigm of
 D'Auctions has been implemented. The
 participants can combine their
 capabilities and create a joining stake
@@ -60,6 +60,77 @@ participant to select a D'Auction that
 is best in terms of satisfying the
 participant's requirements and desires.
 
-**Architecure**
+**Location**
+
+The implementation provided is located
+at [GitHub](https://github.com/Pruvendo/never2). The product is under
+[MIT](https://opensource.org/licenses/MIT) license.
+
+**Architecture**
+
+The following key contracts were
+implemented.
+
+_BidLocker_
+
+This contract keeps the bid of a participant
+until the auction is completed. Upon completion
+the bid either sent to _NeverBank_ or returned
+back to the participant.
+
+_BlindAuction_
+
+To be here.
+
+_DeAuction_
+
+The present implementation of D'Auctions works 
+as follows:
+- _DeAuction_ contract is created using the 
+owner's public key where the parent 
+_BlindAuction_ is kept as a static variable.
+_DeAuction_ as well as a _BlindAuction_ works in
+both directions. It will create two stakes -
+_NEVER/EVER_ and _EVER_NEVER_, certainly, 
+only in case the corresponding 
+_WeightedAggregate_ contracts will exist. 
+- The corresponding _WeightedAggregate_ 
+contracts are created keeping the _DeAuction_
+address as a static variable.
+- The owner calls _setAggregators_ methods to
+keep the addresses of aggregators and trust 
+them. Additionally, it calls _setLockerCode_ to
+be able to create bids as well as _setStakeCode_
+to trust to the _Stake_ contracts to be 
+appeared.
+- Upon the completion of the auction (in case
+of any result) the _DeAuction_ will be notified
+by _BidLocker_ (described above) using 
+_notifyWin_ method and thus receives coins that
+can be withdrawn by _Stake_ owners using
+_withdraw_ method.
+
+_Stake_
+
+The _Stake_ contract works in the following way:
+- _Stake_ contract is created using the 
+owner's public key where the parent _DeAuction_
+is kept as a static variable.
+- Upon creation, it's necessary to put there a
+required amount and call _lock_ with two 
+numbers - (nano)evers and (nano)nevers as well
+as with direction flag (_true_ means that
+the coversion from NEVER to EVER is expected).
+- Upon the successful lock the contract send all
+the coins to the _DeAuction_ to take them back
+upon completion using _withdraw_ method
+(_DeAuction_ is trustful as the contract 
+address is checked).
 
 **Usage**
+
+**More information**
+
+Feel free to ask any question [Sergey Egorov](https://t/me/SergeyEgorovSPb), 
+he will either answer or address them
+to the proper developer.
