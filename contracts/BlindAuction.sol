@@ -1,8 +1,8 @@
 pragma ton-solidity >=0.59.4;
 
 import "./BidLocker.sol";
-import "./Interfaces.sol";
-import "./Lib.sol";
+import "./lib/Interfaces.sol";
+import "./lib/Lib.sol";
 
 
 
@@ -13,6 +13,9 @@ contract BlindAuction is IAuction {
     uint64 static _iteration;
 
     //
+
+    event auctionNeverWinnerEvent(address locker);
+    event auctionEverWinnerEvent(address locker);
 
     Phase _phase;
 
@@ -26,10 +29,12 @@ contract BlindAuction is IAuction {
     Bid neverSecondPrice;
     // <<
 
-    uint128 _USDToNanoever;   //  assumed as NEVER/NANOEVER
+    uint128 _USDToNanoever;   //  assumed as  10^9 * NANONEVER/NANOEVER
+
+    Bid _baselineBid;         //  bids with lesser ratio aren't allowed
 
     uint256 _minNanoeverBid;
-    uint256 _minNeverBid;
+    uint256 _minNanoneverBid;
 
     uint64 openTS;
     uint64 revealStartTS;
@@ -48,7 +53,7 @@ contract BlindAuction is IAuction {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner, Errors.IS_NOT_OWNER);
+        require(msg.sender == _owner, Errors.IS_NOT_AUCTION_OWNER);
         _;
     }
 
@@ -66,17 +71,20 @@ contract BlindAuction is IAuction {
 
     constructor (
                  uint128 USDToNanoever,
-                 uint256 minNeverBid,
+                 uint256 minNanoneverBid,
                  uint256 minNanoeverBid,
                  uint64 openDuration,
                  uint64 revealDuration) public onlyProxy {
         tvm.accept();
         _phase = Phase.OPEN;
-        openTS = tx.timestamp;
+        openTS = now;
 
         _USDToNanoever = USDToNanoever;
 
-        _minNeverBid = minNeverBid;
+        _baselineBid = Bid(10^9, _USDToNanoever, false);
+
+
+        _minNanoneverBid = minNanoneverBid;
         _minNanoeverBid = minNanoeverBid;
 
         _openDuration = openDuration;
@@ -91,13 +99,18 @@ contract BlindAuction is IAuction {
                     uint256 bidHash,
                     uint256 key,
                     uint64 lockTS,
-                    uint256 nevers,
+                    uint256 nanonevers,
                     uint256 nanoevers,
                     bool isNever) public override doUpdate inPhase(Phase.REVEAL) {
 
         require(lockTS < revealStartTS, Errors.BID_NOT_LOCKED_IN_TIME);
-        
-        TvmCell code = _lockerCode.toSlice().loadRef();
+
+        tvm.accept(); // затычка (не хватает газа)
+
+        // TODO не лучше ли использовать хеши?
+        // если их не использовать, то газа не хватает
+        // TvmCell code = _lockerCode.toSlice().loadRef();
+        TvmCell code = _lockerCode;
         TvmCell state = tvm.buildStateInit({
             contr: BidLocker,
             varInit: {
@@ -109,13 +122,17 @@ contract BlindAuction is IAuction {
             code: code
         });
         address lockerAddress = address.makeAddrStd(0, tvm.hash(state));
-        require(lockerAddress == msg.sender, Errors.NOT_A_LOCKER);
-
-        tvm.accept();
+        // require(lockerAddress == msg.sender, Errors.NOT_A_LOCKER);
+        if (lockerAddress != msg.sender) {
+            return; // NOT A LOCKER CONTRACT
+        }
 
         if (isNever) {
-            require(nanoevers >= _minNanoeverBid, Errors.BID_TOO_SMALL);
-            Bid newBid = Bid(nevers, nanoevers, isNever);
+            _baselineBid.isNever = true;
+            Bid newBid = Bid(nanonevers, nanoevers, isNever);
+            if (Helpers.greater(_baselineBid, newBid) || nanoevers < _minNanoeverBid) {
+                return;  // BID TOO SMALL OR RATE BELOW MIN
+            }
             if (Helpers.greater(newBid, everSecondPrice)) {
                 everSecondPrice = newBid;
             }
@@ -124,8 +141,13 @@ contract BlindAuction is IAuction {
                 everFirst = msg.sender;
             }
         } else {
-            require(nevers >= _minNeverBid, Errors.BID_TOO_SMALL);
-            Bid newBid = Bid(nevers, nanoevers, isNever);
+            _baselineBid.isNever = false;
+            Bid newBid = Bid(nanonevers, nanoevers, isNever);
+            require(nanonevers >= _minNanoneverBid, Errors.BID_TOO_SMALL);
+            require(Helpers.greaterOrEqual(newBid, _baselineBid), Errors.BID_RATE_BELOW_MIN);
+            if (Helpers.greater(_baselineBid, newBid) || nanonevers < _minNanoneverBid) {
+                return;  // BID TOO SMALL OR RATE BELOW MIN
+            }
             if (Helpers.greater(newBid, neverSecondPrice)) {
                 neverSecondPrice = newBid;
             }
@@ -134,44 +156,67 @@ contract BlindAuction is IAuction {
                 neverFirst = msg.sender;
             }
         }
-
     }
 
     function update() public pure onlyOwner doUpdate {
         tvm.accept();
-    } 
+    }
 
     //
 
     function _update() private {
-        if (_phase == Phase.OPEN && tx.timestamp > openTS + _openDuration) {
+        // TODO если не было ни одного ревила, то контракт намертво застрянет
+        if (_phase == Phase.OPEN && now > openTS + _openDuration) {
             _phase = Phase.REVEAL;
-            revealStartTS = tx.timestamp;
+            revealStartTS = now;
         }
-        if (_phase == Phase.REVEAL && tx.timestamp > revealStartTS + _revealDuration) {
+        if (_phase == Phase.REVEAL && now > revealStartTS + _revealDuration) {
             _phase = Phase.CLOSED;
-            _closeTS = tx.timestamp;
+            _closeTS = now;
         }
         if (_phase == Phase.CLOSED) {
+            // TODO никто не может инициировать выплату кроме владельца, что плохо
             _notifyWinner();
         }
     }
 
     function _notifyWinner() private view {
-        // todo: emit winner event
 
-        INeverBank(_bank).updateWinners(
-            _closeTS,
-            neverFirst,
-            neverSecondPrice.nevers,
-            neverSecondPrice.nanoevers,
-            everFirst,
-            everSecondPrice.nanoevers,
-            everSecondPrice.nevers
-        );
+        (uint256 neverWinnerNevers,
+         uint256 neverWinnerEvers, 
+         uint256 everWinnerEvers,
+         uint256 everWinnerNevers) = _calcWinnerRatios();
+
+        INeverBank(_bank).updateWinners({
+            closeTS: _closeTS,
+            neverWinner: neverFirst,
+            neverWinnerNevers: neverWinnerNevers,
+            neverWinnerEvers: neverWinnerEvers,
+            everWinner: everFirst,
+            everWinnerEvers: everWinnerEvers,
+            everWinnerNevers: everWinnerNevers
+        });
+
+        emit auctionNeverWinnerEvent(neverFirst);
+        emit auctionEverWinnerEvent(everFirst);
+    }
+
+    function _calcWinnerRatios() private view 
+            returns (uint256 nNanonevers, uint256 nNanoevers,
+                     uint256 eNanoevers, uint256 eNanonevers) {
+        // the winner should be able to get his requested amount of currency
+        // but pay according to the ratio of the second highest bid.
+
+        // winner of never auction:
+        nNanonevers = neverFirstPrice.nanonevers;
+        nNanoevers = neverSecondPrice.nanoevers * nNanonevers / neverSecondPrice.nanoevers; 
+        // winner of ever auction:
+        eNanoevers = everFirstPrice.nanoevers;
+        eNanonevers = everSecondPrice.nanonevers * eNanonevers / everSecondPrice.nanonevers;
     }
 
     function _setLockerCode(TvmCell code) public onlyOwner {
+        tvm.accept();
         _lockerCode = code;
     }
 

@@ -1,7 +1,7 @@
 pragma ton-solidity >=0.59.4;
 
-import "./Interfaces.sol";
-import "./Lib.sol";
+import "./lib/Interfaces.sol";
+import "./lib/Lib.sol";
 
 
 contract BidLocker {
@@ -33,7 +33,7 @@ contract BidLocker {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner, Errors.IS_NOT_OWNER);
+        require(msg.sender == _owner, Errors.IS_NOT_LOCKER_OWNER);
         _;
     }
 
@@ -56,51 +56,64 @@ contract BidLocker {
 
         if (_never) {
             ExtraCurrencyCollection currencies = address(this).currencies;
-            optional(uint256) nevers = currencies.fetch(Constants.NEVER_ID);
-            require(nevers.hasValue(), Errors.NEVER_TOO_LOW);
-            lockedBalance = nevers.get();
+            optional(uint256) nanonevers = currencies.fetch(Constants.NEVER_ID);
+            require(nanonevers.hasValue(), Errors.NEVER_TOO_LOW);
+            lockedBalance = nanonevers.get();
         } else {
             lockedBalance = address(this).balance - _operationsReserved;
         }
 
-        lockedTS = tx.timestamp;
+        lockedTS = now;
         locked = true;
     }
 
     function verify(address owner, address auction,
-                    uint256 nevers, uint256 evers, uint128 salt) public {
+                    uint256 nanonevers, uint256 nanoevers, uint128 salt) public {
 
         require(tvm.pubkey() == msg.pubkey());
+        require(!_successfulReveal);
         tvm.accept();
 
         TvmBuilder bidBuilder;
-        bidBuilder.store(nevers, evers, salt);
+        bidBuilder.store(nanonevers, nanoevers, salt);
         TvmCell bidCell = bidBuilder.toCell();
 
-        require(tvm.hash(bidCell) == bidHash, Errors.BAD_BID_HASH);
+        if (tvm.hash(bidCell) != bidHash) {
+            return;
+        }
 
         TvmBuilder ownerBuilder;
         ownerBuilder.store(owner, salt);
         TvmCell ownerCell = ownerBuilder.toCell();
 
-        require(tvm.hash(ownerCell) == ownerAddrHash, Errors.BAD_OWNER_HASH);
+        if (tvm.hash(ownerCell) != ownerAddrHash) {
+            return;
+        }
 
         TvmBuilder auctionBuilder;
         auctionBuilder.store(auction, salt);
         TvmCell auctionCell = auctionBuilder.toCell();
 
-        require(tvm.hash(auctionCell) == auctionAddrHash, Errors.BAD_AUCTION_HASH);
+        if (tvm.hash(auctionCell) != auctionAddrHash) {
+            return;
+        }
 
-
-        if (_never) {
-            require(lockedBalance >= nevers, Errors.NEVER_TOO_LOW);
-        } else {
-            require(lockedBalance >= evers, Errors.BALANCE_TOO_LOW);
+        if (_never && lockedBalance < nanonevers || (!_never) && lockedBalance < nanoevers) {
+            return;
         }
 
         _successfulReveal = true;
         _owner = owner;
-        IAuction(auction).reveal(auctionAddrHash, ownerAddrHash, bidHash, tvm.pubkey(), lockedTS, nevers, evers, _never);
+        IAuction(auction).reveal(
+            auctionAddrHash,
+            ownerAddrHash,
+            bidHash,
+            tvm.pubkey(),
+            lockedTS,
+            nanonevers,
+            nanoevers,
+            _never
+        );
     }
 
     function transfer(address dest) public view {
@@ -128,6 +141,6 @@ contract BidLocker {
         } else {
             INeverBank(_bank).payNevers();
         }
-    } 
+    }
 
 }

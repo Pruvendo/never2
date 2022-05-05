@@ -32,6 +32,7 @@
 				{"name":"pubkey","type":"uint256"}
 			],
 			"outputs": [
+				{"name":"value0","type":"address"}
 			]
 		},
 		{
@@ -49,20 +50,20 @@
 			"outputs": [
 				{"name":"lastAuction","type":"address"}
 			]
-		},
-		{
-			"name": "auctionCodeHash",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"auctionCodeHash","type":"uint256"}
-			]
 		}
 	],
 	"data": [
 		{"key":1,"name":"_oracle","type":"address"}
 	],
 	"events": [
+		{
+			"name": "auctionStartedEvent",
+			"inputs": [
+				{"name":"auction","type":"address"}
+			],
+			"outputs": [
+			]
+		}
 	],
 	"fields": [
 		{"name":"_pubkey","type":"uint256"},
@@ -74,7 +75,7 @@
 		{"name":"auctionIteration","type":"uint64"},
 		{"name":"lastAuction","type":"address"},
 		{"name":"newAuctionIsDue","type":"bool"},
-		{"name":"auctionCodeHash","type":"uint256"},
+		{"name":"_auctionCodeHash","type":"uint256"},
 		{"name":"_auctionCode","type":"cell"},
 		{"name":"_auctionCodeSet","type":"bool"},
 		{"name":"_auctionDeployValue","type":"uint128"}

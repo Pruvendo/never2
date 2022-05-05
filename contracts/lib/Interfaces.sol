@@ -7,7 +7,7 @@ interface IAuction {
                     uint256 bidHash,
                     uint256 key,
                     uint64 lockTS,
-                    uint256 nevers,
+                    uint256 nanonevers,
                     uint256 nanoevers,
                     bool isNever
     ) external;
@@ -23,24 +23,27 @@ interface INeverBank {
                            uint256 neverWinnerEvers,
                            address everWinner,
                            uint256 everWinnerEvers,
-                           uint256 everWinnerNever
+                           uint256 everWinnerNevers
     ) external;
 }
 
 interface IDeAuction {
-    function newStake(uint256 nevers,
+    function newStake(uint256 nanonevers,
                       uint256 nanoevers,
                       bool isNever,
                       uint256 key
     ) external;
-    function withdraw(uint256 nevers,
+    function withdraw(uint256 nanonevers,
                       uint256 nanoevers,
                       bool isNever,
                       uint256 key
     ) external;
+    function acceptAggregate(uint256 nanonevers,
+                             uint256 nanoevers,
+                             bool isNever) external;
 }
 
 interface IAggregator {
-    function addStake(uint256 nevers, uint256 nanoevers) external;
-    function aggregate() external returns (uint256 nevers, uint256 nanoevers);
+    function addStake(uint256 nanonevers, uint256 nanoevers) external;
+    function aggregate() external;
 }

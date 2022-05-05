@@ -1,10 +1,12 @@
 pragma ton-solidity >=0.59.4;
 
+// TODO pragmas????
+
 import "./BlindAuction.sol";
-import "./Lib.sol";
+import "./lib/Lib.sol";
 
 
-// Creates auctions, handles oracle subscription 
+// Creates auctions, handles oracle subscription
 
 contract OracleProxy {
 
@@ -13,17 +15,18 @@ contract OracleProxy {
     address _bank;
 
     // updated via oracle
-    uint128 _USDToNanoever; 
+    uint128 _USDToNanoever;
 
     uint64 auctionIteration = 0;
 
     address public lastAuction;
+    event auctionStartedEvent(address auction);
 
     bool newAuctionIsDue = false;
 
     //
 
-    uint256 public auctionCodeHash;
+    uint256 _auctionCodeHash;
     TvmCell _auctionCode;
     bool _auctionCodeSet = false;
 
@@ -66,16 +69,14 @@ contract OracleProxy {
         }
     }
 
-  
+
 
     //
     // do it by hand
-    function initiateAuctions(uint256 pubkey) public checkPubkey {
+    function initiateAuctions(uint256 pubkey) public checkPubkey returns (address) {
         require(_auctionCodeSet, Errors.AUCTION_CODE_NOT_SET);
         require(address(_bank) != address(0), Errors.BANK_NOT_SET);
         tvm.accept();
-
-        // todo: emit notifying event
 
         lastAuction = new BlindAuction{
             code: _auctionCode,
@@ -86,15 +87,19 @@ contract OracleProxy {
                 _bank: _bank,
                 _iteration: auctionIteration++
             }
-        }(_USDToNanoever, 10, 25000000, 900, 300);
+        }(_USDToNanoever, 10, 25000000, 900, 300); // TODO use args
 
+        emit auctionStartedEvent(lastAuction);
+
+        return lastAuction;
     }
 
+    // TODO don't save code, use hash+depth
     function _setAuctionCode(TvmCell code) public checkPubkey {
         tvm.accept();
 
         _auctionCode = code;
-        auctionCodeHash = tvm.hash(code);
+        _auctionCodeHash = tvm.hash(code);
         _auctionCodeSet = true;
     }
 
