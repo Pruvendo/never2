@@ -1,3 +1,6 @@
+# NEVER Phase 2 (Auctions)
+## Developed by Pruvendo at 05/06/22
+
 **Introduction**
 
 The present set of conracts describes
@@ -82,6 +85,11 @@ _BlindAuction_
 
 To be here.
 
+_Calculator_
+
+_Calculator_ is an auxiliary contract that
+performs hash calculations with salting.
+
 _DeAuction_
 
 The present implementation of D'Auctions works 
@@ -109,6 +117,16 @@ by _BidLocker_ (described above) using
 _notifyWin_ method and thus receives coins that
 can be withdrawn by _Stake_ owners using
 _withdraw_ method.
+
+_NeverBank_
+
+_NeverBank_ is an auxiliary contract that is
+responsible for payments to winners of auctions.
+
+_OracleProxy_
+
+This contract acts a bridge between oracles and
+auctions, creating the laters.
 
 _Stake_
 
