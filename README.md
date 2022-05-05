@@ -273,6 +273,74 @@ where the _\<address\>_ is a proxy address
 received above. Again, remember the address
 from the last output line.
 
+Now the auction has started.The user can do
+bids and create D'Auctions.
+
+- Create D'Auction by
+
+```
+./deploy_deauction.sh <address>
+```
+
+where the _\<address\>_ is taken from the 
+previous bullet point. Remember the address.
+
+- Now the user can create stakes by
+
+```
+./deploy_stake.sh <address>
+```
+where the _\<address\>_ is an D'Auction address.
+Remember the address.
+
+- To lock the stake and withdraw use:
+
+```
+./lock_stake.sh <address>
+```
+
+- Just to withdraw:
+
+```
+ ./withdraw_stake.sh <address>
+```
+
+Also the user can act without D'Auctions:
+
+- To deploy locker with the given hashes and 
+flags. Remember the address:
+
+```
+./deploy_locker.sh <auctionAddrHash> <ownerAddrHash> <bidHash> <isNever>
+```
+
+- To lock the bid:
+
+```
+./lock_locker.sh <address>
+```
+
+- To reveal:
+
+```
+./reveal_locker.sh <address> <owner> <auction> <nanonevers> <nanoevers> <salt>
+```
+
+_Note: Addresses should be without 0:_
+
+**Links**
+
+_OracleProxy_
+0:76c91eebfcf6cb8a12bcc1a6c77ada5d9488821716faa91fec512feb3a6e39bd
+_NeverBank_
+0:424e2d4611d45e3daf148a49c5ae6b1ca8358bcaae2df6f2924c9a82efa88585
+_DeAuction_
+0:4cfab22670b64b71206d5a71031453223b8b002e3caa4538674b665c535d05bf
+_Stake_
+0:e09d6bcaad311d3a5dfa30b21c5c81fb05fbd70cb68dcbbe0cba9f3044e92604
+_BidLocker_
+0:ae0291e79bd4fb550bb10cd8d6c95f2df1674e02d63993d8bb4a3989352d8cc1
+
 **Quality**
 
 The present system was both covered by TS4 tests
